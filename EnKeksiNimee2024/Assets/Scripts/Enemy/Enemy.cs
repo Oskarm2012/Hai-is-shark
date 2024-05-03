@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Enemy : MonoBehaviour
+
+
+public class Enemy : MonoBehaviour, IDamageable
 {
     public float currentspeed = 3f;
     public Transform playerTransform;
+    public int maxHealth = 3;
+    private int currentHealth;
     private Rigidbody2D body;
 
 private Vector2 direction;
@@ -15,10 +19,12 @@ private Vector2 direction;
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
-
+    void OnEnable()
+    {
+        currentHealth = maxHealth;     
+    }
 
     void FixedUpdate()
     {
@@ -29,9 +35,34 @@ private Vector2 direction;
     void Move()
     {
         if(playerTransform == null){
+            GetPlayer();
             return;
         }
         direction = (playerTransform.position - transform.position).normalized;
         body.MovePosition(body.position + direction * currentspeed * Time.fixedDeltaTime);
     }
+
+
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        if(currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void GetPlayer(){
+        playerTransform = GameManager.Instance.playerController.transform;
+    }
+
+
+
+    public void Die()
+    {
+        EnemyPoolManager.Instance.ReturnEnemy(gameObject);
+    }
 }
+
+

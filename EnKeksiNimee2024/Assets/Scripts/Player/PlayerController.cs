@@ -24,10 +24,11 @@ public class PlayerController : MonoBehaviour
         controls = new Master();
     }
 
+
     // Start is called before the first frame update
     void Start()
     {
-    
+        GameManager.Instance.playerController = this;
     }
 
     private void OnEnable()
